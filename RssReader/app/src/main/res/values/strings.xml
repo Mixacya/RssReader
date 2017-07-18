@@ -17,8 +17,10 @@
     <string name="dialog_close">Do you want close it?</string>
     <string name="dialog_remove">Do you want remove it?</string>
 
-    <string name="add_rss">Add Rss</string>
-    <string name="error">Error</string>
     <string name="sort_ascending">Sort ascending</string>
     <string name="sort_descending">Sort descending</string>
+
+    <string name="add_rss">Add Rss</string>
+    <string name="error">Error</string>
+    <string name="fill_fields">All fields must be fill</string>
 </resources>

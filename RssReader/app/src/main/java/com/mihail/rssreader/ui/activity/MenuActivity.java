@@ -108,6 +108,7 @@ public class MenuActivity extends BaseActivity {
     private void addAndSelectTab(Channel channel, MenuItem item) {
         if (channel != null) {
             TabLayout.Tab newTab = mTabLayout.newTab().setText(item.getTitle());
+            newTab.setTag(channel.getId());
             mTabLayout.addTab(newTab);
 
             RssFragment fragment = new RssFragment();
@@ -152,7 +153,7 @@ public class MenuActivity extends BaseActivity {
         }
     }
 
-    private void addMenuItem(Channel item, final Menu menu) {
+    private void addMenuItem(final Channel item, final Menu menu) {
         for (int i = 0; i < menu.size(); i++) {
             if (menu.getItem(i).getTitle().equals(item.getTitle())) {
                 return;
@@ -168,9 +169,20 @@ public class MenuActivity extends BaseActivity {
             public void onClick(View view) {
                 menu.removeItem(view.getId());
                 DatabaseManager.getInstance().getChannelDAO().delete(view.getId());
+                closeTab(item);
             }
         });
         menuItem.setActionView(btnRemove);
+    }
+
+    private void closeTab(Channel item) {
+        for (int i = 0; i < mTabLayout.getTabCount(); i++) {
+            TabLayout.Tab tab = mTabLayout.getTabAt(i);
+            if (tab.getTag().equals(item.getId())) {
+                mTabLayout.removeTabAt(i);
+                mRssAdapter.remove(i);
+            }
+        }
     }
 
     private final TabLayout.OnTabSelectedListener onTabSelectedListener = new TabLayout.OnTabSelectedListener() {
@@ -189,7 +201,13 @@ public class MenuActivity extends BaseActivity {
     private final DialogHelper.OnAddRssListener onAddRssListener = new DialogHelper.OnAddRssListener() {
         @Override
         public void onAddRss(String title, String url) {
-            makeMenuItem(title, url);
+            title = title.trim();
+            url = url.trim();
+            if ((title != null && !title.isEmpty()) && (url != null && !url.isEmpty())) {
+                makeMenuItem(title, url);
+            } else {
+                Snackbar.make(mContainer, R.string.fill_fields, Snackbar.LENGTH_LONG).show();
+            }
         }
     };
 
